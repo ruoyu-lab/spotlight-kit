@@ -12,6 +12,7 @@ import {
 } from 'vue';
 import type { Step, Tour, TourState } from '@spotlight-kit/core';
 import {
+  CLOSE_ICON_PATH,
   ROOT_ATTRIBUTE,
   bindKeyboard,
   createOverlay,
@@ -58,7 +59,7 @@ export const SpotlightTour = defineComponent({
     radius: { type: Number, default: 8 },
     gap: { type: Number, default: 12 },
     overlayColor: { type: String, default: 'rgba(15, 23, 42, 0.6)' },
-    animationMs: { type: Number, default: 220 },
+    animationMs: { type: Number, default: 260 },
     scroll: { type: [String, Boolean] as PropType<'auto' | 'smooth' | false>, default: 'smooth' },
     labels: { type: Object as PropType<Partial<Labels>>, default: undefined },
     keyboard: { type: Boolean, default: true },
@@ -94,7 +95,6 @@ export const SpotlightTour = defineComponent({
         document: doc,
         container: root,
         color: props.overlayColor,
-        animationMs: props.animationMs,
         onBackdropClick: props.closeOnOverlayClick ? stop : undefined,
       });
 
@@ -105,6 +105,7 @@ export const SpotlightTour = defineComponent({
         radius: props.radius,
         gap: props.gap,
         scroll: props.scroll,
+        animationMs: props.animationMs,
         measurePopover: () => {
           const el = popoverEl.value;
           if (!el) return null;
@@ -146,7 +147,11 @@ export const SpotlightTour = defineComponent({
     const defaultContent = (s: TourState, step: Step): VNode[] => {
       const l = labels.value;
       return [
-        h('button', { class: 'sk-close', type: 'button', 'aria-label': l.close, onClick: stop }, '×'),
+        h('button', { class: 'sk-close', type: 'button', 'aria-label': l.close, onClick: stop }, [
+          h('svg', { viewBox: '0 0 14 14', width: 14, height: 14, 'aria-hidden': 'true' }, [
+            h('path', { d: CLOSE_ICON_PATH, fill: 'none', stroke: 'currentColor', 'stroke-width': 1.6, 'stroke-linecap': 'round' }),
+          ]),
+        ]),
         step.title ? h('h3', { class: 'sk-title', id: `${uid}-title` }, step.title) : null,
         step.body ? h('p', { class: 'sk-body', id: `${uid}-body` }, step.body) : null,
         h('div', { class: 'sk-footer' }, [

@@ -88,18 +88,25 @@ export function createDomDetectors(doc: Document): Readonly<Record<string, Detec
     let pending: ReturnType<typeof setTimeout> | undefined;
 
     const handler = (e: Event): void => {
+      // Text typed through an IME (pinyin, kana, ...) is only a draft until the composition ends.
+      if ((e as InputEvent).isComposing) return;
       const element = ctx.locate(ref);
       if (!isElement(element) || !e.composedPath().includes(element)) return;
-      if (filter && !filter(e, element)) return;
-      // Let the app's own handlers run first so the next step sees the result of the action.
+      // Decide later, so the page's own handlers run first and the filter sees the final value.
       clearTimeout(pending);
-      pending = setTimeout(ctx.complete, 0);
+      pending = setTimeout(() => {
+        if (!filter || filter(e, element)) ctx.complete();
+      }, 0);
     };
 
     doc.addEventListener(name, handler, true);
+    // The last `input` of a composition still reports isComposing, so the commit is only visible here.
+    const listenToCommit = name === 'input';
+    if (listenToCommit) doc.addEventListener('compositionend', handler, true);
     return () => {
       clearTimeout(pending);
       doc.removeEventListener(name, handler, true);
+      if (listenToCommit) doc.removeEventListener('compositionend', handler, true);
     };
   };
 
@@ -133,16 +140,28 @@ export function createDomDetectors(doc: Document): Readonly<Record<string, Detec
       if (isElement(element) && test(element)) ctx.complete();
     };
 
+    const onInput = (e: Event): void => {
+      if (!(e as InputEvent).isComposing) check();
+    };
+    const onCompositionEnd = (): void => {
+      clearTimeout(pending);
+      pending = setTimeout(check, 0); // the committed value is in place by then
+    };
+    let pending: ReturnType<typeof setTimeout> | undefined;
+
     const observer = new MutationObserverImpl(check);
     observer.observe(doc, { subtree: true, childList: true, attributes: true, characterData: true });
     // Form values are properties, not attributes, so mutations alone would miss them.
-    doc.addEventListener('input', check, true);
+    doc.addEventListener('input', onInput, true);
     doc.addEventListener('change', check, true);
+    doc.addEventListener('compositionend', onCompositionEnd, true);
     check();
     return () => {
+      clearTimeout(pending);
       observer.disconnect();
-      doc.removeEventListener('input', check, true);
+      doc.removeEventListener('input', onInput, true);
       doc.removeEventListener('change', check, true);
+      doc.removeEventListener('compositionend', onCompositionEnd, true);
     };
   };
 

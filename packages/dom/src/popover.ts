@@ -22,6 +22,26 @@ export type PopoverFactory = (context: PopoverContext) => PopoverView;
 
 let counter = 0;
 
+/** Path of the close "x" in a 14x14 box, shared with framework bindings. */
+export const CLOSE_ICON_PATH = 'M3.5 3.5l7 7M10.5 3.5l-7 7';
+
+export function createCloseIcon(doc: Document): SVGSVGElement {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = doc.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 14 14');
+  svg.setAttribute('width', '14');
+  svg.setAttribute('height', '14');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = doc.createElementNS(ns, 'path');
+  path.setAttribute('d', CLOSE_ICON_PATH);
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', 'currentColor');
+  path.setAttribute('stroke-width', '1.6');
+  path.setAttribute('stroke-linecap', 'round');
+  svg.append(path);
+  return svg;
+}
+
 export const createDefaultPopover: PopoverFactory = ({ document: doc, tour, labels }) => {
   const uid = `sk-${++counter}`;
   const el = <K extends keyof HTMLElementTagNameMap>(tag: K, className: string): HTMLElementTagNameMap[K] => {
@@ -39,7 +59,7 @@ export const createDefaultPopover: PopoverFactory = ({ document: doc, tour, labe
   const arrow = el('div', 'sk-arrow');
   const close = el('button', 'sk-close');
   close.type = 'button';
-  close.textContent = '×';
+  close.append(createCloseIcon(doc));
   close.setAttribute('aria-label', labels.close);
 
   const title = el('h3', 'sk-title');

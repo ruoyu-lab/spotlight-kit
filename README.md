@@ -18,6 +18,7 @@ Step-by-step product tours that dim the page and spotlight the thing the user sh
 | `@spotlight-kit/core` | Tour engine, completion combinators. No DOM. | nothing |
 | `@spotlight-kit/dom` | Target lookup, DOM completion conditions, overlay, popover | core |
 | `@spotlight-kit/vue` | `<SpotlightTour>` component and `useTour()` | core, dom, vue (peer) |
+| `@spotlight-kit/react` | `<SpotlightTour>` component and `useTour()` hook | core, dom, react (peer) |
 
 ## Quick start (plain HTML)
 
@@ -47,7 +48,7 @@ const tour = createSpotlight({
 tour.start();
 ```
 
-Runnable demos: [`examples/basic`](examples/basic/index.html) (plain HTML) and [`examples/vue`](examples/vue) (`npm run example:vue`).
+Runnable demos: [`examples/basic`](examples/basic/index.html) (plain HTML), [`examples/vue`](examples/vue) (`npm run example:vue`) and [`examples/react`](examples/react) (`npm run example:react`).
 
 ## Steps
 
@@ -79,7 +80,7 @@ interface Step {
 | Builder | Completes when |
 | --- | --- |
 | `click(target?)`, `change()`, `submit()`, `event(name, target?)` | the event happens on the target |
-| `input(target?, match?)` | the user typed and the value satisfies `match` (RegExp, string, or function) |
+| `input(target?, match?)` | the user typed and the value satisfies `match` (RegExp, string, or function). IME drafts (pinyin, kana) are ignored until the composition is committed |
 | `appears(target?)` / `disappears(target?)` | the element shows up / is gone |
 | `attr(target, name, value?)`, `hasClass(target, name)`, `elementState(target, fn)` | the element reaches that state |
 | `when(fn)` or a bare function | `fn()` returns (or resolves to) true. Polled. Use it for route, API or store state |
@@ -130,6 +131,26 @@ The default slot replaces the popover's content and keeps its positioning:
   <button :disabled="!state.canNext" @click="next">{{ labels.next }}</button>
 </SpotlightTour>
 ```
+
+## React
+
+```tsx
+import { SpotlightTour, useTour, createTour, createDomPlatform } from '@spotlight-kit/react';
+
+const tour = createTour({ ...createDomPlatform(), id: 'home', steps: [/* ... */] });
+
+export function App() {
+  const { state, start } = useTour(tour); // useSyncExternalStore under the hood
+  return (
+    <>
+      <button onClick={() => start()}>Take the tour</button>
+      <SpotlightTour tour={tour} />
+    </>
+  );
+}
+```
+
+Pass a function as children to replace the popover's content and keep its positioning: `<SpotlightTour tour={tour}>{({ step, next, labels }) => ...}</SpotlightTour>`.
 
 ## Persistence and routes
 

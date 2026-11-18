@@ -150,3 +150,17 @@ export function computePlacement(input: PlacementInput): PlacementResult {
   const x = clamp(side === 'right' ? target.x + target.width + gap : target.x - gap - p.width, margin, maxX);
   return { x, y, side, arrow: clamp(centerY - y, ARROW_INSET, p.height - ARROW_INSET) };
 }
+
+/**
+ * Blends two placements, so a popover can glide between two targets while the
+ * highlight does the same. The side and the arrow snap to the destination when
+ * the sides differ, because an arrow offset has no meaning across edges.
+ */
+export function lerpPlacement(from: PlacementResult, to: PlacementResult, t: number): PlacementResult {
+  return {
+    x: from.x + (to.x - from.x) * t,
+    y: from.y + (to.y - from.y) * t,
+    side: to.side,
+    arrow: from.side === to.side ? from.arrow + (to.arrow - from.arrow) * t : to.arrow,
+  };
+}

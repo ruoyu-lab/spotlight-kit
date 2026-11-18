@@ -20,7 +20,7 @@ export interface RendererOptions {
   gap?: number;
   /** Dimming color. Default `rgba(15, 23, 42, 0.6)`. */
   overlayColor?: string;
-  /** Duration of the highlight's glide between steps, in ms. 0 disables it. Default 220. */
+  /** Duration of the glide between steps (highlight and popover together), in ms. 0 disables it. Default 260. */
   animationMs?: number;
   /** How to scroll the target into view. `false` disables scrolling. Default `'smooth'`. */
   scroll?: 'auto' | 'smooth' | false;
@@ -62,7 +62,6 @@ export function mountRenderer(tour: Tour, options: RendererOptions = {}): Render
     document: doc,
     container: root,
     color: options.overlayColor ?? 'rgba(15, 23, 42, 0.6)',
-    animationMs: options.animationMs,
     onBackdropClick: options.closeOnOverlayClick ? () => tour.stop() : undefined,
   });
   root.append(popoverEl); // after the overlay, so it stacks on top
@@ -74,6 +73,7 @@ export function mountRenderer(tour: Tour, options: RendererOptions = {}): Render
     radius: options.radius ?? 8,
     gap: options.gap ?? 12,
     scroll: options.scroll ?? 'smooth',
+    animationMs: options.animationMs ?? 260,
     measurePopover: () => {
       const { width, height } = popoverEl.getBoundingClientRect();
       return { width, height };

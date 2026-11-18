@@ -20,7 +20,7 @@ export const CSS = `
 .sk-popover[data-side=right] .sk-arrow{left:-5px;top:calc(var(--sk-arrow) - 5px)}
 .sk-popover[data-side=left] .sk-arrow{right:-5px;top:calc(var(--sk-arrow) - 5px)}
 .sk-popover[data-side=center] .sk-arrow{display:none}
-.sk-title{margin:0 24px 6px 0;font-size:16px;font-weight:600;line-height:1.3}
+.sk-title{margin:0 28px 6px 0;font-size:16px;font-weight:600;line-height:1.3}
 .sk-body{margin:0 0 14px;white-space:pre-line}
 .sk-footer{display:flex;align-items:center;gap:8px}
 .sk-progress{flex:1;color:var(--sk-muted);font-size:12px}
@@ -28,9 +28,10 @@ export const CSS = `
 .sk-btn:disabled{opacity:.4;cursor:default}
 .sk-btn:focus-visible,.sk-close:focus-visible{outline:2px solid var(--sk-accent);outline-offset:2px}
 .sk-btn-primary{background:var(--sk-accent);color:var(--sk-accent-fg)}
-.sk-close{position:absolute;top:8px;right:8px;width:28px;height:28px;border:0;border-radius:6px;background:none;color:var(--sk-muted);font-size:18px;line-height:1;cursor:pointer}
-.sk-close:hover{background:var(--sk-soft)}
-@media (prefers-reduced-motion:reduce){.sk-popover{transition:none!important}}
+.sk-close{position:absolute;top:10px;right:10px;display:grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:50%;background:none;color:var(--sk-muted);cursor:pointer;transition:background-color .12s,color .12s}
+.sk-close svg{display:block}
+.sk-close:hover{background:var(--sk-soft);color:var(--sk-fg)}
+@media (prefers-reduced-motion:reduce){.sk-close{transition:none}}
 `;
 
 const STYLE_ID = 'spotlight-kit-style';

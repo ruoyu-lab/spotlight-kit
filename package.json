@@ -9,17 +9,24 @@
     "packages/core",
     "packages/dom",
     "packages/vue",
-    "examples/vue"
+    "packages/react",
+    "examples/vue",
+    "examples/react"
   ],
   "scripts": {
-    "build": "npm run build -w @spotlight-kit/core && npm run build -w @spotlight-kit/dom && npm run build -w @spotlight-kit/vue",
+    "build": "npm run build -w @spotlight-kit/core && npm run build -w @spotlight-kit/dom && npm run build -w @spotlight-kit/vue && npm run build -w @spotlight-kit/react",
     "test": "vitest run",
     "typecheck": "npm run build",
     "clean": "rm -rf packages/*/dist",
-    "example:vue": "npm run dev -w @spotlight-kit/example-vue"
+    "example:vue": "npm run dev -w @spotlight-kit/example-vue",
+    "example:react": "npm run dev -w @spotlight-kit/example-react"
   },
   "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
     "happy-dom": "^21.0.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "typescript": "^5.6.3",
     "vitest": "^2.1.9",
     "vue": "^3.5.13"

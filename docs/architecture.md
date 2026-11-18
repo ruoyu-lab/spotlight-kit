@@ -6,7 +6,8 @@
 
 ```
 ┌────────────────────────────────────────────────┐
-│ @spotlight-kit/vue   <SpotlightTour>, useTour  │  可选
+│ @spotlight-kit/vue | react  <SpotlightTour>,   │  可选
+│                              useTour           │
 ├────────────────────────────────────────────────┤
 │ @spotlight-kit/dom                              │
 │   environment  目标查找与监听 (MutationObserver) │
@@ -20,7 +21,7 @@
 └────────────────────────────────────────────────┘
 ```
 
-依赖只向下:`vue → dom → core`。`core` 的 `tsconfig` 不含 DOM 库,所以误用 DOM API 会直接编译失败。
+依赖只向下:`vue / react → dom → core`,框架包之间互不依赖。`core` 的 `tsconfig` 不含 DOM 库,所以误用 DOM API 会直接编译失败。
 
 ## core:状态机
 
@@ -65,9 +66,13 @@ enter(i) ─▶ preparing ─▶ locating ─▶ active ─▶ (completed) ─�
 
 事件类条件在 `document` 上用捕获阶段监听,每次事件都重新解析目标并用 `composedPath()` 判断归属。这样元素被框架替换、事件发生在 shadow DOM 内部都不会漏。完成动作用 `setTimeout(0)` 延后,让页面自己的处理函数先执行,下一步看到的是操作之后的页面。
 
+**输入法**:`input` 与 `elementState` 会忽略 `isComposing` 为真的输入事件(拼音、假名等草稿阶段输入框里已有字母,值并不是最终内容),并在 `compositionend` 之后重新判断。
+
 ### Stage:渲染器无关的几何层
 
-`createStage` 接收 `TourState`,完成:滚动到可见 → 每帧跟随目标矩形(`requestAnimationFrame` 比较,覆盖 transform 动画、兄弟元素位移、任意祖先滚动)→ 驱动遮罩 → 计算气泡位置并回调 `onLayout`。它不创建气泡,所以默认 DOM 气泡和 Vue 气泡共用同一套逻辑。
+`createStage` 接收 `TourState`,完成:滚动到可见 → 每帧跟随目标矩形(`requestAnimationFrame` 比较,覆盖 transform 动画、兄弟元素位移、任意祖先滚动)→ 驱动遮罩 → 计算气泡位置并回调 `onLayout`。它不创建气泡,所以默认 DOM 气泡、Vue 气泡和 React 气泡共用同一套逻辑。
+
+**步骤间的滑动动画**由 stage 统一计算:遮罩的镂空矩形和气泡位置都由同一个缓动进度插值得到,所以两者不会错位;目标在滑动途中继续移动(平滑滚动)时,终点会实时跟随。`prefers-reduced-motion` 下自动关闭。
 
 纯函数集中在 `geometry.ts`(镂空路径、气泡避让与翻转、箭头偏移),在 Node 下即可单测。
 
@@ -81,12 +86,12 @@ enter(i) ─▶ preparing ─▶ locating ─▶ active ─▶ (completed) ─�
 - 只想要逻辑:`createTour({ ...createDomPlatform(), ... })`,自己渲染。
 - 想要几何但不要气泡:用 `createStage` + `createOverlay`。
 
-## vue
+## vue / react
 
-只做绑定,不含引导逻辑:
+只做绑定,不含引导逻辑,两者结构对称:
 
-- `useTour(tour)`:把快照放进 `shallowRef`,随作用域销毁自动取消订阅。
-- `<SpotlightTour>`:复用 `createStage`/`createOverlay`,气泡由 Vue 渲染并传送到根节点,默认插槽替换内容。组件不销毁 `tour`,它的生命周期属于使用者。
+- `useTour(tour)`:Vue 把快照放进 `shallowRef` 并随作用域销毁取消订阅;React 用 `useSyncExternalStore`。
+- `<SpotlightTour>`:复用 `createStage`/`createOverlay`,气泡由框架渲染并传送到根节点(Vue 用 `Teleport`,React 用 portal),默认插槽 / children 函数替换内容。组件不销毁 `tour`,它的生命周期属于使用者。React 下已在 StrictMode 中验证副作用可重复执行。
 
 ## 有意不做(v1)
 

@@ -18,6 +18,7 @@
 | `@spotlight-kit/core` | 引导引擎、完成条件组合子,无 DOM | 无 |
 | `@spotlight-kit/dom` | 目标查找、DOM 完成条件、遮罩、气泡 | core |
 | `@spotlight-kit/vue` | `<SpotlightTour>` 组件和 `useTour()` | core、dom、vue(peer) |
+| `@spotlight-kit/react` | `<SpotlightTour>` 组件和 `useTour()` hook | core、dom、react(peer) |
 
 ## 快速开始(原生 HTML)
 
@@ -47,7 +48,7 @@ const tour = createSpotlight({
 tour.start();
 ```
 
-可运行的示例:[`examples/basic`](examples/basic/index.html)(原生 HTML)和 [`examples/vue`](examples/vue)(`npm run example:vue`)。
+可运行的示例:[`examples/basic`](examples/basic/index.html)(原生 HTML)、[`examples/vue`](examples/vue)(`npm run example:vue`)和 [`examples/react`](examples/react)(`npm run example:react`)。
 
 ## 步骤
 
@@ -79,7 +80,7 @@ interface Step {
 | 构造函数 | 何时完成 |
 | --- | --- |
 | `click(target?)`、`change()`、`submit()`、`event(name, target?)` | 目标上发生了该事件 |
-| `input(target?, match?)` | 用户输入后,值满足 `match`(正则、字符串或函数) |
+| `input(target?, match?)` | 用户输入后,值满足 `match`(正则、字符串或函数)。输入法的拼音草稿会被忽略,直到确认上屏 |
 | `appears(target?)` / `disappears(target?)` | 元素出现 / 消失 |
 | `attr(target, name, value?)`、`hasClass(target, name)`、`elementState(target, fn)` | 元素达到某种状态 |
 | `when(fn)` 或直接写函数 | `fn()` 返回(或 resolve)为 true,会轮询。适合路由、接口、状态库 |
@@ -130,6 +131,26 @@ const { state, start } = useTour(tour);
   <button :disabled="!state.canNext" @click="next">{{ labels.next }}</button>
 </SpotlightTour>
 ```
+
+## React
+
+```tsx
+import { SpotlightTour, useTour, createTour, createDomPlatform } from '@spotlight-kit/react';
+
+const tour = createTour({ ...createDomPlatform(), id: 'home', steps: [/* ... */] });
+
+export function App() {
+  const { state, start } = useTour(tour); // 底层是 useSyncExternalStore
+  return (
+    <>
+      <button onClick={() => start()}>开始引导</button>
+      <SpotlightTour tour={tour} />
+    </>
+  );
+}
+```
+
+把函数作为 children 传入,即可替换气泡内容并保留定位:`<SpotlightTour tour={tour}>{({ step, next, labels }) => ...}</SpotlightTour>`。
 
 ## 进度保存与路由
 

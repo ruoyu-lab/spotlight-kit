@@ -8,6 +8,7 @@ import {
   createDomPlatform,
   createSpotlight,
   disappears,
+  elementState,
   hasClass,
   input,
   zhCN,
@@ -127,6 +128,53 @@ describe('completion detectors', () => {
 
     field.value = '123';
     field.dispatchEvent(new Event('input', { bubbles: true }));
+    await settle();
+    expect(tour.getState().index).toBe(1);
+  });
+
+  it('input ignores IME drafts (pinyin) until the composition is committed', async () => {
+    html('<input id="i" />');
+    const field = document.getElementById('i') as HTMLInputElement;
+    const tour = makeTour([{ id: 'a', target: '#i', completion: input(undefined, (v) => v.length >= 3) }, { id: 'b' }]);
+    tour.start();
+
+    const fire = (type: string, isComposing: boolean) => {
+      const e = new Event(type, { bubbles: true });
+      Object.defineProperty(e, 'isComposing', { value: isComposing });
+      field.dispatchEvent(e);
+    };
+
+    fire('compositionstart', true);
+    for (const draft of ['h', 'ha', 'ha j', 'ha ji', 'ha ji mi']) {
+      field.value = draft; // "ha ji mi" is 8 characters, but only a draft
+      fire('input', true);
+    }
+    await settle();
+    expect(tour.getState().index).toBe(0);
+
+    field.value = '哈基米';
+    fire('input', true);
+    fire('compositionend', false);
+    await settle();
+    expect(tour.getState().index).toBe(1);
+  });
+
+  it('state conditions also wait for the composition to end', async () => {
+    html('<input id="i" />');
+    const field = document.getElementById('i') as HTMLInputElement;
+    const tour = makeTour([{ id: 'a', target: '#i', completion: elementState('#i', (el) => (el as HTMLInputElement).value.length >= 3) }, { id: 'b' }]);
+    tour.start();
+    const fire = (type: string, isComposing: boolean) => {
+      const e = new Event(type, { bubbles: true });
+      Object.defineProperty(e, 'isComposing', { value: isComposing });
+      field.dispatchEvent(e);
+    };
+    field.value = 'ha ji mi';
+    fire('input', true);
+    await settle();
+    expect(tour.getState().index).toBe(0);
+    field.value = '哈基米';
+    fire('compositionend', false);
     await settle();
     expect(tour.getState().index).toBe(1);
   });

@@ -1,0 +1,45 @@
+{
+  "name": "@spotlight-kit/react",
+  "version": "0.1.0",
+  "description": "Optional React bindings for spotlight-kit: a <SpotlightTour> component and a useTour() hook.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruoyu-lab/spotlight-kit.git",
+    "directory": "packages/react"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@spotlight-kit/core": "0.1.0",
+    "@spotlight-kit/dom": "0.1.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "keywords": [
+    "react",
+    "onboarding",
+    "tour",
+    "spotlight",
+    "guide"
+  ]
+}

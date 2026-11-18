@@ -1,0 +1,9 @@
+body { margin: 0; font: 16px/1.6 system-ui, -apple-system, "PingFang SC", sans-serif; color: #111827; background: #f9fafb; }
+header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: #fff; }
+main { max-width: 680px; margin: 24px auto; padding: 0 16px; }
+.card { background: #fff; border-radius: 10px; padding: 16px; margin: 16px 0; }
+.spacer { height: 70vh; display: grid; place-items: center; color: #9ca3af; }
+input { font: inherit; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; width: 60%; }
+button { font: inherit; padding: 8px 14px; border: 0; border-radius: 6px; background: #e5e7eb; cursor: pointer; }
+button.primary { background: #2563eb; color: #fff; }
+pre { font-size: 13px; white-space: pre-wrap; }

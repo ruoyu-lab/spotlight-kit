@@ -12,6 +12,7 @@ import { createPortal } from 'react-dom';
 import type { Step, Tour, TourState } from '@spotlight-kit/core';
 import {
   CLOSE_ICON_PATH,
+  PROGRESS_DOTS_MAX,
   ROOT_ATTRIBUTE,
   bindKeyboard,
   createOverlay,
@@ -58,6 +59,20 @@ export interface SpotlightTourProps {
 const HIDDEN: StageLayout = { visible: false, x: 0, y: 0, side: 'center', arrow: 0 };
 const useIsomorphicLayoutEffect = typeof document === 'undefined' ? useEffect : useLayoutEffect;
 
+function Progress({ state, labels }: { state: TourState; labels: Labels }) {
+  if (state.total <= 1) return null;
+  const text = labels.progress(state.index + 1, state.total);
+  if (state.total > PROGRESS_DOTS_MAX) return <>{text}</>;
+  return (
+    <>
+      {Array.from({ length: state.total }, (_, i) => (
+        <i key={i} className="sk-dot" data-s={i < state.index ? 'done' : i === state.index ? 'current' : 'todo'} aria-hidden="true" />
+      ))}
+      <span className="sk-sr">{text}</span>
+    </>
+  );
+}
+
 function DefaultContent({ state, step, labels, next, prev, stop, ids }: SpotlightRenderProps & { ids: [string, string] }) {
   return (
     <>
@@ -77,7 +92,9 @@ function DefaultContent({ state, step, labels, next, prev, stop, ids }: Spotligh
         </p>
       ) : null}
       <div className="sk-footer">
-        <span className="sk-progress">{state.total > 1 ? labels.progress(state.index + 1, state.total) : ''}</span>
+        <span className="sk-progress">
+          <Progress state={state} labels={labels} />
+        </span>
         {state.isFirst ? null : (
           <button className="sk-btn" type="button" onClick={prev}>
             {labels.prev}
@@ -187,7 +204,7 @@ export function SpotlightTour(props: SpotlightTourProps): ReactPortal | null {
   return createPortal(
     <div
       ref={popoverRef}
-      className="sk-popover"
+      className="sk-popover sk-in"
       role="dialog"
       aria-labelledby={ids[0]}
       aria-describedby={ids[1]}

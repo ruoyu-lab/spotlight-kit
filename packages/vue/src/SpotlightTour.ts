@@ -13,6 +13,7 @@ import {
 import type { Step, Tour, TourState } from '@spotlight-kit/core';
 import {
   CLOSE_ICON_PATH,
+  PROGRESS_DOTS_MAX,
   ROOT_ATTRIBUTE,
   bindKeyboard,
   createOverlay,
@@ -144,6 +145,18 @@ export const SpotlightTour = defineComponent({
       host.value = null;
     });
 
+    const progress = (s: TourState, l: Labels): VNode[] | string => {
+      if (s.total <= 1) return '';
+      const text = l.progress(s.index + 1, s.total);
+      if (s.total > PROGRESS_DOTS_MAX) return text;
+      return [
+        ...Array.from({ length: s.total }, (_, i) =>
+          h('i', { key: i, class: 'sk-dot', 'data-s': i < s.index ? 'done' : i === s.index ? 'current' : 'todo', 'aria-hidden': 'true' }),
+        ),
+        h('span', { class: 'sk-sr' }, text),
+      ];
+    };
+
     const defaultContent = (s: TourState, step: Step): VNode[] => {
       const l = labels.value;
       return [
@@ -155,7 +168,7 @@ export const SpotlightTour = defineComponent({
         step.title ? h('h3', { class: 'sk-title', id: `${uid}-title` }, step.title) : null,
         step.body ? h('p', { class: 'sk-body', id: `${uid}-body` }, step.body) : null,
         h('div', { class: 'sk-footer' }, [
-          h('span', { class: 'sk-progress' }, s.total > 1 ? l.progress(s.index + 1, s.total) : ''),
+          h('span', { class: 'sk-progress' }, progress(s, l)),
           s.isFirst ? null : h('button', { class: 'sk-btn', type: 'button', onClick: prev }, l.prev),
           h(
             'button',
@@ -181,7 +194,7 @@ export const SpotlightTour = defineComponent({
           'div',
           {
             ref: popoverEl,
-            class: 'sk-popover',
+            class: 'sk-popover sk-in',
             role: 'dialog',
             'aria-labelledby': `${uid}-title`,
             'aria-describedby': `${uid}-body`,

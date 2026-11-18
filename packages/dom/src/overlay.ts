@@ -46,7 +46,10 @@ export function createOverlay(options: OverlayOptions): Overlay {
   blocker.setAttribute('fill', 'transparent');
   blocker.setAttribute('pointer-events', 'all');
 
-  svg.append(mask, blocker);
+  const ring = doc.createElementNS(SVG_NS, 'rect');
+  ring.setAttribute('class', 'sk-ring');
+
+  svg.append(mask, blocker, ring);
   svg.style.display = 'none';
   container.append(svg);
 
@@ -64,6 +67,17 @@ export function createOverlay(options: OverlayOptions): Overlay {
       blocker.style.display = '';
     } else {
       blocker.style.display = 'none';
+    }
+    if (current) {
+      // The stroke is centered on the edge; grow by half of it so it sits outside the hole.
+      ring.setAttribute('x', String(current.x - 1));
+      ring.setAttribute('y', String(current.y - 1));
+      ring.setAttribute('width', String(current.width + 2));
+      ring.setAttribute('height', String(current.height + 2));
+      ring.setAttribute('rx', String(radius + 1));
+      ring.style.display = '';
+    } else {
+      ring.style.display = 'none';
     }
   };
 

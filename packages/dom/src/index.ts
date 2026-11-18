@@ -58,7 +58,7 @@ export { en, zhCN } from './labels.js';
 export type { Labels } from './labels.js';
 export { createOverlay } from './overlay.js';
 export type { Overlay, OverlayOptions, Spot } from './overlay.js';
-export { CLOSE_ICON_PATH, createCloseIcon, createDefaultPopover } from './popover.js';
+export { CLOSE_ICON_PATH, PROGRESS_DOTS_MAX, createCloseIcon, createDefaultPopover } from './popover.js';
 export type { PopoverContext, PopoverFactory, PopoverView } from './popover.js';
 export { mountRenderer } from './renderer.js';
 export type { Renderer, RendererOptions } from './renderer.js';

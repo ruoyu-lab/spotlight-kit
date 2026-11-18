@@ -56,6 +56,7 @@ export function mountRenderer(tour: Tour, options: RendererOptions = {}): Render
 
   const popover = (options.popover ?? createDefaultPopover)({ document: doc, tour, labels });
   const popoverEl = popover.element;
+  popoverEl.classList.add('sk-in');
   popoverEl.style.visibility = 'hidden';
 
   const overlay = createOverlay({

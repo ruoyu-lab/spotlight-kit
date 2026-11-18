@@ -22,6 +22,9 @@ export type PopoverFactory = (context: PopoverContext) => PopoverView;
 
 let counter = 0;
 
+/** Up to this many steps the progress is drawn as dots, beyond it as text. */
+export const PROGRESS_DOTS_MAX = 8;
+
 /** Path of the close "x" in a 14x14 box, shared with framework bindings. */
 export const CLOSE_ICON_PATH = 'M3.5 3.5l7 7M10.5 3.5l-7 7';
 
@@ -95,7 +98,7 @@ export const createDefaultPopover: PopoverFactory = ({ document: doc, tour, labe
       title.hidden = !step.title;
       body.textContent = step.body ?? '';
       body.hidden = !step.body;
-      progress.textContent = state.total > 1 ? labels.progress(state.index + 1, state.total) : '';
+      renderProgress(doc, progress, state.index, state.total, labels);
       prev.hidden = state.isFirst;
       next.textContent = state.isLast ? labels.finish : labels.next;
       next.disabled = !state.canNext;
@@ -109,3 +112,24 @@ export const createDefaultPopover: PopoverFactory = ({ document: doc, tour, labe
     },
   };
 };
+
+function renderProgress(doc: Document, container: HTMLElement, index: number, total: number, labels: Labels): void {
+  container.textContent = '';
+  if (total <= 1) return;
+  const text = labels.progress(index + 1, total);
+  if (total > PROGRESS_DOTS_MAX) {
+    container.textContent = text;
+    return;
+  }
+  for (let i = 0; i < total; i++) {
+    const dot = doc.createElement('i');
+    dot.className = 'sk-dot';
+    dot.setAttribute('data-s', i < index ? 'done' : i === index ? 'current' : 'todo');
+    dot.setAttribute('aria-hidden', 'true');
+    container.append(dot);
+  }
+  const sr = doc.createElement('span');
+  sr.className = 'sk-sr';
+  sr.textContent = text; // dots are decoration; screen readers get "2 / 5"
+  container.append(sr);
+}

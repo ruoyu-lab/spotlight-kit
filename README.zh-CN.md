@@ -165,7 +165,7 @@ tour.on('finish', () => localStorage.setItem('tour:step', 'done'));
 
 ## 样式与多语言
 
-默认外观由 CSS 变量控制:`--sk-accent`、`--sk-bg`、`--sk-fg`、`--sk-radius`、`--sk-z` 等(见 `packages/dom/src/styles.ts`),并跟随 `prefers-color-scheme` 与 `prefers-reduced-motion`。按钮文案来自 `labels`,内置 `en` 和 `zhCN`。
+默认外观由 CSS 变量控制:`--sk-accent`、`--sk-bg`、`--sk-fg`、`--sk-text`、`--sk-radius`、`--sk-ring-width`(高亮区域的描边,设为 `0px` 即去掉)、`--sk-z` 等(见 `packages/dom/src/styles.ts`),并跟随 `prefers-color-scheme` 与 `prefers-reduced-motion`。按钮文案来自 `labels`,内置 `en` 和 `zhCN`。
 
 ## 开发
 

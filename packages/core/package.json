@@ -1,0 +1,29 @@
+{
+  "name": "@tutorial-kit/core",
+  "version": "0.1.0",
+  "description": "Framework-agnostic step tutorial state machine: no DOM, no UI, no framework.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "keywords": [
+    "tutorial",
+    "onboarding",
+    "steps",
+    "guide",
+    "framework-agnostic"
+  ]
+}

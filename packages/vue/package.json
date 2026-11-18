@@ -1,0 +1,28 @@
+{
+  "name": "@tutorial-kit/vue",
+  "version": "0.1.0",
+  "description": "Optional Vue 3 bindings for @tutorial-kit/core. Use the core directly if you do not need Vue.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@tutorial-kit/core": "0.1.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  }
+}

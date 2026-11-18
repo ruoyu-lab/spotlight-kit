@@ -1,0 +1,27 @@
+{
+  "name": "tutorial-kit-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Framework-agnostic step-by-step tutorial engine for HTML, with optional DOM and Vue 3 bindings.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/core",
+    "packages/dom",
+    "packages/vue"
+  ],
+  "scripts": {
+    "build": "npm run build -w @tutorial-kit/core && npm run build -w @tutorial-kit/dom && npm run build -w @tutorial-kit/vue",
+    "test": "vitest run",
+    "typecheck": "tsc -b packages/core packages/dom packages/vue",
+    "clean": "rm -rf packages/*/dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9",
+    "vue": "^3.5.13"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

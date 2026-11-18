@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>tutorial-kit · basic example</title>
+  <!-- No bundler: resolve the workspace packages straight from their dist folders. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@tutorial-kit/core": "../../packages/core/dist/index.js",
+      "@tutorial-kit/dom": "../../packages/dom/dist/index.js"
+    }
+  }
+  </script>
+  <style>
+    body { font: 16px/1.6 system-ui, sans-serif; max-width: 640px; margin: 48px auto; padding: 0 16px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 16px 0; }
+    button { font: inherit; padding: 8px 14px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Basic example</h1>
+  <div id="intro-a" class="card">Search lives here.</div>
+  <div id="intro-b" class="card">Results show up here.</div>
+  <button id="start" type="button">Start tutorial</button>
+
+  <script type="module">
+    import { createTutorial } from '@tutorial-kit/core';
+    import { mountTutorial } from '@tutorial-kit/dom';
+
+    const tutorial = createTutorial({
+      tutorial: {
+        id: 'basic',
+        steps: [
+          { id: 'welcome', title: 'Welcome', body: 'This walks you through the page.' },
+          { id: 'search', title: 'Search', body: 'Start typing here.', target: '#intro-a', placement: 'bottom' },
+          { id: 'results', title: 'Results', body: 'Matches appear in this card.', target: '#intro-b' },
+        ],
+      },
+      storage: window.localStorage,
+    });
+
+    let unmount = null;
+    document.getElementById('start').addEventListener('click', () => {
+      unmount?.();
+      unmount = mountTutorial(tutorial);
+      tutorial.start(0);
+    });
+  </script>
+</body>
+</html>

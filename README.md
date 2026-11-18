@@ -1,69 +1,161 @@
-# tutorial-kit
+# spotlight-kit
 
-A step-by-step, spotlight-style tutorial engine for the web.
+[简体中文](README.zh-CN.md)
 
-- **Core is pure logic.** `@tutorial-kit/core` is a state machine with no DOM, no UI and no framework. Use it with any renderer.
-- **Plain HTML works out of the box.** `@tutorial-kit/dom` mounts a spotlight overlay with no framework and no build step.
-- **Vue 3 is optional.** `@tutorial-kit/vue` only binds the core to Vue reactivity, and you can skip it entirely.
-- **Backend-agnostic.** Tutorials are plain JSON-shaped objects, so they can come from a static file, an API or code.
+Step-by-step product tours that dim the page and spotlight the thing the user should touch next. The engine is plain TypeScript with no DOM and no framework, so the UI is yours to replace. A ready-made DOM renderer and an optional Vue 3 component are included.
 
-中文说明见 [README.zh-CN.md](README.zh-CN.md).
+- **Headless core.** `@spotlight-kit/core` is a state machine: steps, navigation, waiting for targets, completion detection. It never touches the DOM.
+- **Follows the user, not the clock.** A step can finish when the user actually clicks, types, or when an element appears. Targets that render late are waited for.
+- **Works on real apps.** Scrolls the target into view, follows it while it moves, survives re-renders.
+- **Drop-in or bring your own UI.** Use `createSpotlight()` for the default overlay and popover, `<SpotlightTour>` in Vue, or drive the core from any UI.
+
+> Status: 0.1.0, not published to npm yet. Until then, build from source (see [Development](#development)).
 
 ## Packages
 
-| Package | Purpose | Depends on |
+| Package | What it is | Depends on |
 | --- | --- | --- |
-| `@tutorial-kit/core` | Steps, navigation, state, persistence hook | nothing |
-| `@tutorial-kit/dom` | Spotlight overlay and popover for plain HTML | core |
-| `@tutorial-kit/vue` | `useTutorial()` composable for Vue 3 | core, vue |
+| `@spotlight-kit/core` | Tour engine, completion combinators. No DOM. | nothing |
+| `@spotlight-kit/dom` | Target lookup, DOM completion conditions, overlay, popover | core |
+| `@spotlight-kit/vue` | `<SpotlightTour>` component and `useTour()` | core, dom, vue (peer) |
 
-## Quick start (no bundler)
-
-```bash
-npm install
-npm run build
-```
-
-Open `examples/basic/index.html` through a local static server, for example `npx serve .`.
-
-## Usage
+## Quick start (plain HTML)
 
 ```ts
-import { createTutorial } from '@tutorial-kit/core';
-import { mountTutorial } from '@tutorial-kit/dom';
+import { createSpotlight, click, input } from '@spotlight-kit/dom';
 
-const tutorial = createTutorial({
-  tutorial: {
-    id: 'onboarding',
-    steps: [
-      { id: 'welcome', title: 'Welcome', body: 'A quick tour.' },
-      { id: 'search', title: 'Search', body: 'Type here.', target: '#search' },
-    ],
-  },
-  storage: window.localStorage, // optional: resume where the user left off
+const tour = createSpotlight({
+  id: 'onboarding',
+  steps: [
+    { id: 'welcome', title: 'Welcome', body: 'A one minute walkthrough.' },
+    {
+      id: 'name',
+      title: 'Name your project',
+      target: '#project-name',
+      completion: input(undefined, (value) => value.length >= 3),
+    },
+    {
+      id: 'create',
+      title: 'Create it',
+      target: '#create',
+      completion: click(),
+    },
+    { id: 'done', title: 'Your project', target: '#project-card' }, // waits until it is rendered
+  ],
 });
 
-const unmount = mountTutorial(tutorial);
-tutorial.start();
+tour.start();
 ```
 
-Vue 3:
+A runnable page lives in [`examples/basic`](examples/basic/index.html).
+
+## Steps
 
 ```ts
-import { useTutorial } from '@tutorial-kit/vue';
-const { state, next, prev, stop } = useTutorial(tutorial);
+interface Step {
+  id: string;
+  title?: string;
+  body?: string;                  // plain text, never interpreted as HTML
+  target?: string | Element | (() => Element | null);   // omit for a centered step
+  placement?: 'auto' | 'top' | 'bottom' | 'left' | 'right';
+  interactive?: boolean;          // can the user operate the highlighted area? default true
+
+  completion?: Completion | (() => boolean | Promise<boolean>) | Completion[];
+  advance?: 'auto' | 'manual';    // what to do once completed. default 'auto'
+  advanceDelay?: number;          // ms before auto-advancing
+  skippable?: boolean;            // allow Next before the completion is met
+
+  waitTimeout?: number;           // ms to wait for the target. default 5000, Infinity = forever
+  onMissing?: 'skip' | 'show' | 'stop';   // after the timeout. default 'skip'
+
+  beforeEnter?(ctx): void | Promise<void>;   // e.g. open a menu, change route
+  afterLeave?(ctx): void;
+  data?: Record<string, unknown>;
+}
 ```
 
-Build your own UI on the core by calling `subscribe` and rendering `getState()`.
+### Completion conditions
+
+| Builder | Completes when |
+| --- | --- |
+| `click(target?)`, `change()`, `submit()`, `event(name, target?)` | the event happens on the target |
+| `input(target?, match?)` | the user typed and the value satisfies `match` (RegExp, string, or function) |
+| `appears(target?)` / `disappears(target?)` | the element shows up / is gone |
+| `attr(target, name, value?)`, `hasClass(target, name)`, `elementState(target, fn)` | the element reaches that state |
+| `when(fn)` or a bare function | `fn()` returns (or resolves to) true. Polled. Use it for route, API or store state |
+| `any(...)`, `all(...)`, array shorthand | combinations |
+| `delay(ms)` | time passed |
+
+`target` defaults to the step's target. Conditions re-resolve targets on every check, so they survive re-renders. While a completion is pending, `next()` is refused unless the step is `skippable` (`tour.skip()` always works).
+
+## Use the core with your own UI
+
+```ts
+import { createTour } from '@spotlight-kit/core';
+import { createDomPlatform } from '@spotlight-kit/dom'; // only for DOM lookups and conditions
+
+const tour = createTour({ ...createDomPlatform(), id: 'tour', steps });
+
+tour.subscribe((state) => {
+  // state.step, state.index, state.total, state.phase, state.target (the element),
+  // state.canNext, state.canPrev, state.completed ...
+  render(state);
+});
+tour.on('finish', () => localStorage.setItem('tour-done', '1'));
+```
+
+`state` is an immutable snapshot, replaced on every change. Wiring it to React, Svelte or anything else is a few lines. For the geometry (hole path, popover placement, following the target) reuse `createStage()` from `@spotlight-kit/dom`.
+
+## Vue 3
+
+```vue
+<script setup lang="ts">
+import { SpotlightTour, useTour, createTour, createDomPlatform } from '@spotlight-kit/vue';
+
+const tour = createTour({ ...createDomPlatform(), id: 'home', steps: [/* ... */] });
+const { state, start } = useTour(tour);
+</script>
+
+<template>
+  <button @click="start()">Take the tour</button>
+  <SpotlightTour :tour="tour" />
+</template>
+```
+
+The default slot replaces the popover's content and keeps its positioning:
+
+```vue
+<SpotlightTour :tour="tour" v-slot="{ step, state, next, prev, stop, labels }">
+  <h3>{{ step.title }}</h3>
+  <button :disabled="!state.canNext" @click="next">{{ labels.next }}</button>
+</SpotlightTour>
+```
+
+## Persistence and routes
+
+The core keeps no storage on purpose. Save progress yourself and resume with `tour.start(index)`:
+
+```ts
+tour.on('step', ({ index }) => localStorage.setItem('tour:step', String(index)));
+tour.on('finish', () => localStorage.setItem('tour:step', 'done'));
+```
+
+For route changes use `beforeEnter` (`router.push(...)`), then let the step wait for its target.
+
+## Styling and i18n
+
+The default look is driven by CSS variables: `--sk-accent`, `--sk-bg`, `--sk-fg`, `--sk-radius`, `--sk-z`, and more (see `packages/dom/src/styles.ts`). It follows `prefers-color-scheme` and `prefers-reduced-motion`. Button texts come from `labels`; `en` and `zhCN` are built in.
 
 ## Development
 
 ```bash
 npm install
-npm test          # vitest
+npm run build      # all packages
+npm test           # vitest (core + dom + vue)
 npm run typecheck
-npm run build
 ```
+
+Design notes: [docs/architecture.md](docs/architecture.md).
 
 ## License
 

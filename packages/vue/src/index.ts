@@ -1,26 +1,9 @@
-import { onScopeDispose, readonly, shallowRef } from 'vue';
-import type { TutorialController, TutorialState } from '@tutorial-kit/core';
+export { useTour } from './use-tour.js';
+export type { UseTour } from './use-tour.js';
+export { SpotlightTour } from './SpotlightTour.js';
+export type { SpotlightSlotProps } from './SpotlightTour.js';
 
-/**
- * Binds a tutorial controller to Vue reactivity. Subscription is removed
- * automatically when the surrounding effect scope (e.g. a component) is disposed.
- */
-export function useTutorial(controller: TutorialController) {
-  const state = shallowRef<TutorialState>(controller.getState());
-  const unsubscribe = controller.subscribe((next) => {
-    state.value = next;
-  });
-  onScopeDispose(unsubscribe);
-
-  return {
-    state: readonly(state),
-    start: (index?: number) => controller.start(index),
-    next: () => controller.next(),
-    prev: () => controller.prev(),
-    goTo: (index: number) => controller.goTo(index),
-    stop: () => controller.stop(),
-    reset: () => controller.reset(),
-  };
-}
-
-export type { TutorialController, TutorialState, Tutorial, TutorialStep } from '@tutorial-kit/core';
+// The most common companions, so a Vue app needs one import line.
+export { createSpotlight, createDomPlatform, appears, attr, change, click, disappears, event, hasClass, input, submit, zhCN, en } from '@spotlight-kit/dom';
+export { createTour, all, any, delay, when } from '@spotlight-kit/core';
+export type { Step, Tour, TourOptions, TourState } from '@spotlight-kit/core';

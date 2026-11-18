@@ -1,7 +1,7 @@
 {
-  "name": "@tutorial-kit/dom",
+  "name": "@spotlight-kit/dom",
   "version": "0.1.0",
-  "description": "Plain HTML/DOM renderer for @tutorial-kit/core: spotlight overlay and popover, no framework.",
+  "description": "Plain DOM layer for spotlight-kit: spotlight overlay, popover, target tracking and DOM completion detectors. No framework.",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -16,10 +16,26 @@
     "dist"
   ],
   "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruoyu-lab/spotlight-kit.git",
+    "directory": "packages/dom"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@tutorial-kit/core": "0.1.0"
-  }
+    "@spotlight-kit/core": "0.1.0"
+  },
+  "keywords": [
+    "onboarding",
+    "tour",
+    "spotlight",
+    "overlay",
+    "popover",
+    "dom"
+  ]
 }

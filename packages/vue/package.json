@@ -1,7 +1,7 @@
 {
-  "name": "@tutorial-kit/vue",
+  "name": "@spotlight-kit/vue",
   "version": "0.1.0",
-  "description": "Optional Vue 3 bindings for @tutorial-kit/core. Use the core directly if you do not need Vue.",
+  "description": "Optional Vue 3 bindings for spotlight-kit: a <SpotlightTour> component and a useTour() composable.",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -16,13 +16,30 @@
     "dist"
   ],
   "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruoyu-lab/spotlight-kit.git",
+    "directory": "packages/vue"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@tutorial-kit/core": "0.1.0"
+    "@spotlight-kit/core": "0.1.0",
+    "@spotlight-kit/dom": "0.1.0"
   },
   "peerDependencies": {
     "vue": "^3.3.0"
-  }
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "onboarding",
+    "tour",
+    "spotlight",
+    "guide"
+  ]
 }

@@ -1,52 +1,103 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>tutorial-kit · basic example</title>
-  <!-- No bundler: resolve the workspace packages straight from their dist folders. -->
+  <title>spotlight-kit · basic example</title>
+  <!-- 不需要打包工具:用 import map 直接指向各包的 dist(先执行 npm run build)。 -->
   <script type="importmap">
   {
     "imports": {
-      "@tutorial-kit/core": "../../packages/core/dist/index.js",
-      "@tutorial-kit/dom": "../../packages/dom/dist/index.js"
+      "@spotlight-kit/core": "../../packages/core/dist/index.js",
+      "@spotlight-kit/dom": "../../packages/dom/dist/index.js"
     }
   }
   </script>
   <style>
-    body { font: 16px/1.6 system-ui, sans-serif; max-width: 640px; margin: 48px auto; padding: 0 16px; }
-    .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 16px 0; }
-    button { font: inherit; padding: 8px 14px; cursor: pointer; }
+    body { margin: 0; font: 16px/1.6 system-ui, -apple-system, "PingFang SC", sans-serif; color: #111827; background: #f9fafb; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: #fff; }
+    main { max-width: 680px; margin: 24px auto; padding: 0 16px; }
+    .card { background: #fff; border-radius: 10px; padding: 16px; margin: 16px 0; }
+    .spacer { height: 70vh; display: grid; place-items: center; color: #9ca3af; }
+    input { font: inherit; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; width: 60%; }
+    button { font: inherit; padding: 8px 14px; border: 0; border-radius: 6px; background: #e5e7eb; cursor: pointer; }
+    button.primary { background: #2563eb; color: #fff; }
+    #menu { display: none; margin-top: 8px; padding: 8px 12px; background: #fff; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
   </style>
 </head>
 <body>
-  <h1>Basic example</h1>
-  <div id="intro-a" class="card">Search lives here.</div>
-  <div id="intro-b" class="card">Results show up here.</div>
-  <button id="start" type="button">Start tutorial</button>
+  <header>
+    <strong>Acme</strong>
+    <button id="help" type="button">产品导览</button>
+  </header>
+
+  <main>
+    <div class="card">
+      <label for="name">给你的项目起个名字</label><br />
+      <input id="name" placeholder="至少输入 3 个字符" autocomplete="off" />
+    </div>
+
+    <div class="card">
+      <button id="create" class="primary" type="button">创建项目</button>
+      <div id="result"></div>
+    </div>
+
+    <div class="spacer">向下滚动 ↓</div>
+
+    <div class="card" id="export-card">
+      <button id="export" type="button">导出报告</button>
+    </div>
+  </main>
 
   <script type="module">
-    import { createTutorial } from '@tutorial-kit/core';
-    import { mountTutorial } from '@tutorial-kit/dom';
+    import { createSpotlight, click, input, appears, zhCN } from '@spotlight-kit/dom';
 
-    const tutorial = createTutorial({
-      tutorial: {
+    const tour = createSpotlight(
+      {
         id: 'basic',
         steps: [
-          { id: 'welcome', title: 'Welcome', body: 'This walks you through the page.' },
-          { id: 'search', title: 'Search', body: 'Start typing here.', target: '#intro-a', placement: 'bottom' },
-          { id: 'results', title: 'Results', body: 'Matches appear in this card.', target: '#intro-b' },
+          { id: 'welcome', title: '欢迎', body: '花一分钟看看怎么创建第一个项目。' },
+          {
+            id: 'name',
+            title: '起个名字',
+            body: '输入至少 3 个字符,完成后会自动进入下一步。',
+            target: '#name',
+            completion: input(undefined, (v) => v.trim().length >= 3),
+          },
+          {
+            id: 'create',
+            title: '创建项目',
+            body: '点击这个按钮。结果区域会稍后才出现,导览会自动等待它。',
+            target: '#create',
+            completion: click(),
+          },
+          {
+            id: 'result',
+            title: '创建成功',
+            body: '这块内容是异步渲染出来的,目标出现后才会高亮。',
+            target: '#result .done',
+            placement: 'top',
+          },
+          {
+            id: 'export',
+            title: '导出',
+            body: '这个按钮在页面下方,聚光灯会自动滚动到它。',
+            target: '#export',
+            interactive: false,
+          },
         ],
       },
-      storage: window.localStorage,
-    });
+      { labels: zhCN },
+    );
 
-    let unmount = null;
-    document.getElementById('start').addEventListener('click', () => {
-      unmount?.();
-      unmount = mountTutorial(tutorial);
-      tutorial.start(0);
+    document.getElementById('create').addEventListener('click', () => {
+      setTimeout(() => {
+        document.getElementById('result').innerHTML = '<p class="done">✅ 项目已创建</p>';
+      }, 800);
     });
+    document.getElementById('help').addEventListener('click', () => tour.start());
+    tour.start();
+    window.tour = tour; // 方便在控制台调试
   </script>
 </body>
 </html>

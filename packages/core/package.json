@@ -1,6 +1,6 @@
 {
   "name": "@spotlight-kit/core",
-  "version": "0.1.0",
+  "version": "0.0.1-beta",
   "description": "Framework-agnostic product tour engine: step state machine, target waiting and completion detection. No DOM, no UI.",
   "license": "MIT",
   "type": "module",

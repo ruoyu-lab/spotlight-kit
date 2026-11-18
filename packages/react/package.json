@@ -1,6 +1,6 @@
 {
   "name": "@spotlight-kit/react",
-  "version": "0.1.0",
+  "version": "0.0.1-beta",
   "description": "Optional React bindings for spotlight-kit: a <SpotlightTour> component and a useTour() hook.",
   "license": "MIT",
   "type": "module",
@@ -28,8 +28,8 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@spotlight-kit/core": "0.1.0",
-    "@spotlight-kit/dom": "0.1.0"
+    "@spotlight-kit/core": "0.0.1-beta",
+    "@spotlight-kit/dom": "0.0.1-beta"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

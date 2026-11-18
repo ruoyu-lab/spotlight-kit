@@ -1,6 +1,6 @@
 {
   "name": "@spotlight-kit/dom",
-  "version": "0.1.0",
+  "version": "0.0.1-beta",
   "description": "Plain DOM layer for spotlight-kit: spotlight overlay, popover, target tracking and DOM completion detectors. No framework.",
   "license": "MIT",
   "type": "module",
@@ -28,7 +28,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@spotlight-kit/core": "0.1.0"
+    "@spotlight-kit/core": "0.0.1-beta"
   },
   "keywords": [
     "onboarding",

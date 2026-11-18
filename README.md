@@ -9,7 +9,7 @@ Step-by-step product tours that dim the page and spotlight the thing the user sh
 - **Works on real apps.** Scrolls the target into view, follows it while it moves, survives re-renders.
 - **Drop-in or bring your own UI.** Use `createSpotlight()` for the default overlay and popover, `<SpotlightTour>` in Vue, or drive the core from any UI.
 
-> Status: 0.1.0, not published to npm yet. Until then, build from source (see [Development](#development)).
+> Status: 0.0.1-beta. Install with the `beta` tag: `npm i @spotlight-kit/dom@beta`.
 
 ## Packages
 

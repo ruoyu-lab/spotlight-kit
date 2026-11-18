@@ -6,7 +6,7 @@
     "dev": "vite --port 5174"
   },
   "dependencies": {
-    "@spotlight-kit/react": "0.1.0",
+    "@spotlight-kit/react": "0.0.1-beta",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

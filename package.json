@@ -1,7 +1,7 @@
 {
   "name": "spotlight-kit-monorepo",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.0.1-beta",
   "description": "Step-by-step product tours with a spotlight: headless core, DOM renderer, optional Vue 3 bindings.",
   "license": "MIT",
   "type": "module",

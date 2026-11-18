@@ -165,7 +165,7 @@ For route changes use `beforeEnter` (`router.push(...)`), then let the step wait
 
 ## Styling and i18n
 
-The default look is driven by CSS variables: `--sk-accent`, `--sk-bg`, `--sk-fg`, `--sk-text`, `--sk-radius`, `--sk-ring-width` (the outline around the highlight, `0px` removes it), `--sk-z`, and more (see `packages/dom/src/styles.ts`). It follows `prefers-color-scheme` and `prefers-reduced-motion`. Button texts come from `labels`; `en` and `zhCN` are built in.
+The default look is driven by CSS variables: `--sk-accent`, `--sk-bg`, `--sk-fg`, `--sk-text`, `--sk-radius`, `0px` removes it), `--sk-z`, and more (see `packages/dom/src/styles.ts`). It follows `prefers-color-scheme` and `prefers-reduced-motion`. Button texts come from `labels`; `en` and `zhCN` are built in.
 
 ## Development
 

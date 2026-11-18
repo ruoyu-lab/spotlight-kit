@@ -2,11 +2,10 @@
  * Default look. Everything is driven by `--sk-*` custom properties, so a page
  * can restyle without touching this file:
  *
- *   :root { --sk-accent: #e11d48; --sk-radius: 6px; --sk-ring-width: 0px; }
+ *   :root { --sk-accent: #e11d48; --sk-radius: 6px; }
  *
  * Colors: --sk-bg, --sk-fg (title), --sk-text (body), --sk-muted, --sk-soft,
- * --sk-soft-2, --sk-accent, --sk-accent-fg. Shape: --sk-radius, --sk-ring,
- * --sk-ring-width. Stacking: --sk-z.
+ * --sk-soft-2, --sk-accent, --sk-accent-fg. Shape: --sk-radius. Stacking: --sk-z.
  */
 export const CSS = `
 .sk-root{position:fixed;inset:0;z-index:var(--sk-z,10000);pointer-events:none;
@@ -17,7 +16,6 @@ export const CSS = `
 
 .sk-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .sk-mask,.sk-blocker{pointer-events:auto}
-.sk-ring{fill:none;stroke:var(--sk-ring,var(--sk-accent));stroke-width:var(--sk-ring-width,2px);pointer-events:none}
 
 .sk-popover{position:absolute;left:0;top:0;box-sizing:border-box;width:min(328px,calc(100vw - 16px));padding:18px 18px 14px;
   border-radius:var(--sk-radius);background:var(--sk-bg);color:var(--sk-text);pointer-events:auto;outline:none;

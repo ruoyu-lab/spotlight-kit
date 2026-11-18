@@ -8,13 +8,15 @@
   "workspaces": [
     "packages/core",
     "packages/dom",
-    "packages/vue"
+    "packages/vue",
+    "examples/vue"
   ],
   "scripts": {
     "build": "npm run build -w @spotlight-kit/core && npm run build -w @spotlight-kit/dom && npm run build -w @spotlight-kit/vue",
     "test": "vitest run",
     "typecheck": "npm run build",
-    "clean": "rm -rf packages/*/dist"
+    "clean": "rm -rf packages/*/dist",
+    "example:vue": "npm run dev -w @spotlight-kit/example-vue"
   },
   "devDependencies": {
     "happy-dom": "^21.0.4",

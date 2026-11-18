@@ -47,7 +47,7 @@ const tour = createSpotlight({
 tour.start();
 ```
 
-A runnable page lives in [`examples/basic`](examples/basic/index.html).
+Runnable demos: [`examples/basic`](examples/basic/index.html) (plain HTML) and [`examples/vue`](examples/vue) (`npm run example:vue`).
 
 ## Steps
 

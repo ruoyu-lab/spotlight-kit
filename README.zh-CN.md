@@ -47,7 +47,7 @@ const tour = createSpotlight({
 tour.start();
 ```
 
-可运行的页面见 [`examples/basic`](examples/basic/index.html)。
+可运行的示例:[`examples/basic`](examples/basic/index.html)(原生 HTML)和 [`examples/vue`](examples/vue)(`npm run example:vue`)。
 
 ## 步骤
 
